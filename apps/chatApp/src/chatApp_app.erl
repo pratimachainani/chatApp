@@ -7,36 +7,23 @@
 
 -behaviour(application).
 
+-define(HOST,"localhost").
+-define(PORT,1883).
+-define(CLIENT_ID,"client_id").
+
 %% Application callbacks
 -export([start/2, stop/1]).
--export([connect/5, joinGroup/1, sendMessage/2]).
+-export([connect/2, connect/5, joinGroup/1, sendMessage/2]).
 
 
 -record(state, {recipient           :: pid(),
                 name                :: atom(),
                 host = "localhost"  :: inet:ip_address() | string(),
                 port = 1883         :: inet:port_number(),
-                socket              :: inet:socket(),
-                receiver            :: pid(),
-                proto_state         :: emqttc_protocol:proto_state(),
                 subscribers = []    :: list(),
                 ping_reqs   = []    :: list(),
-                pending_pubsub = [] :: list(),
-                inflight_msgid      :: pos_integer(),
-                auto_resub = false  :: boolean(),
-                force_ping = false  :: boolean(),
                 keepalive           :: emqttc_keepalive:keepalive() | undefined,
-                keepalive_after     :: non_neg_integer(),
-                connack_timeout     :: pos_integer(),
-                puback_timeout      :: pos_integer(),
-                suback_timeout      :: pos_integer(),
-                connack_tref        :: reference(),
-                transport = tcp     :: tcp | ssl,
-                reconnector         :: emqttc_reconnector:reconnector() | undefined,
-                logger              :: gen_logger:logmod(),
-                tcp_opts            :: [gen_tcp:connect_option()],
-                connection_id       ::  pid(),
-                ssl_opts            :: [ssl:ssloption()]}).
+                logger              :: gen_logger:logmod()}).
 
 %%====================================================================
 %% API
@@ -48,6 +35,11 @@ start(_StartType, _StartArgs) ->
 %%--------------------------------------------------------------------
 stop(_State) ->
     ok.
+
+connect(Username,Password) ->
+  {ok,C} = emqttc:start_link([{host,?HOST},{port,?PORT},{username,Username},{password, Password},{client_id, ?CLIENT_ID}, {logger,console,info}]),
+  emqttc:subscribe(C, <<"/topic">>, 1),
+  {ok, #state{recipient = C}}.
 
 connect(Host, Port, Username, Password, ClientId) ->
 %%  {ok,C} = io:format("Client[~s] connecting to MQTT Broker running at, ~s:~s with credentials {~s,~s}", [ClientId, Host, Port, Username, Password]),
