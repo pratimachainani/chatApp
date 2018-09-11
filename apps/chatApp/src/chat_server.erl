@@ -25,7 +25,6 @@ stop(_State) ->
   ok.
 
 init(_Arg0) ->
-%%  chatApp_sup:start_link(),
   {ok, C} = emqttc:start_link([
     {host, "localhost"},
     {port, 1883},
@@ -34,14 +33,11 @@ init(_Arg0) ->
     {password, <<"password">>}]),
 
   %% The pending subscribe
-  emqttc:subscribe(C, <<"TopicA">>, 1),
+%%  emqttc:subscribe(C, <<"TopicA">>, 1),
   {ok, #state{recipient = C, seq = 1}}.
 
 handle_call(stop, _From, State) ->
   {stop, normal, ok, State};
-
-%%handle_call(_Request, _From, State) ->
-%%  {reply, ok, State}.
 
 handle_call({subscribe, Topic, QoS}, _From, State = #state{recipient = C}) ->
   emqttc:subscribe(C, list_to_binary([Topic]), QoS),
