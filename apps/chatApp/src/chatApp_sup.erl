@@ -20,6 +20,7 @@
 %%====================================================================
 
 start_link() ->
+    io:format("in chat_app_sup, start_link"),
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %%====================================================================
@@ -31,6 +32,7 @@ start_link() ->
 %% Before OTP 18 tuples must be used to specify a child. e.g.
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
+    io:format("in chat_app_sup, init()"),
     {ok, { {one_for_all, 0, 1}, []} }.
 
 %%====================================================================
