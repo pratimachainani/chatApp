@@ -16,8 +16,7 @@
 }).
 
 start(_StartType, _StartArgs) ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []),
-  chatApp_sup:start_link().
+  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
 %%--------------------------------------------------------------------
 stop(_State) ->
@@ -27,7 +26,6 @@ init(_Arg0) ->
   {ok, C} = emqttc:start_link([
     {host, "localhost"},
     {port, 1883},
-    {client_id, <<"pc_client_id">>},
     {username, <<"pratima">>},
     {password, <<"password">>}]),
 

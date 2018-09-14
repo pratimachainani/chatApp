@@ -7,34 +7,17 @@
 
 -behaviour(supervisor).
 
-%% API
 -export([start_link/0]).
-
-%% Supervisor callbacks
 -export([init/1]).
 
 -define(SERVER, ?MODULE).
 
-%%====================================================================
-%% API functions
-%%====================================================================
-
 start_link() ->
-    io:format("in chat_app_sup, start_link"),
-    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+  io:format("In chatApp_sup:start_link"),
+  supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-%%====================================================================
-%% Supervisor callbacks
-%%====================================================================
-
-%% Child :: #{id => Id, start => {M, F, A}}
-%% Optional keys are restart, shutdown, type, modules.
-%% Before OTP 18 tuples must be used to specify a child. e.g.
-%% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    io:format("in chat_app_sup, init()"),
-    {ok, { {one_for_all, 0, 1}, []} }.
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
+  io:format("In chatApp_sup:init"),
+  SupervisorFlags = #{strategy => one_for_all, intensity => 0, period => 5},
+  ChildSpecs = [#{id => chatApp, start => {chatApp, start, [[],[]]}, restart => permanent}],
+  {ok, {SupervisorFlags, ChildSpecs}}.
