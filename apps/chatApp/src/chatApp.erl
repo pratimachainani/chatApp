@@ -1,4 +1,4 @@
--module(chat_server).
+-module(chatApp).
 
 -behaviour(gen_server).
 
